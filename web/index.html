@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roblox UI Forge — مولّد واجهات روبلوكس</title>
+<style>
+:root{
+  --bg0:#07090d; --bg1:#0b0f16; --panel:#111722; --panel2:#0e141d; --line:#1d2735;
+  --txt:#e8eef7; --dim:#8a97a8; --acc:#00c2ff; --acc2:#7c5cff; --ok:#25d07c; --warn:#ffb020; --bad:#ff4d5e;
+  --r:14px; --fs:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  font-family:system-ui,-apple-system,"Segoe UI",Tahoma,"Noto Kufi Arabic",sans-serif;
+  background:radial-gradient(1200px 600px at 85% -10%, rgba(0,194,255,.14), transparent 50%),
+             radial-gradient(900px 500px at 8% 110%, rgba(124,92,255,.14), transparent 50%),
+             linear-gradient(180deg,var(--bg0),var(--bg1));
+  color:var(--txt); font-size:var(--fs); min-height:100vh;
+}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:#223044;border-radius:6px}
+::-webkit-scrollbar-track{background:transparent}
+.wrap{max-width:1460px;margin:0 auto;padding:20px 20px 60px}
+header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 4px;margin-bottom:14px}
+.logo{display:flex;align-items:center;gap:12px}
+.logo .mark{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 0 24px rgba(0,194,255,.45);font-size:22px}
+.logo h1{font-size:20px;letter-spacing:.3px}
+.logo small{display:block;color:var(--dim);font-size:12px;margin-top:2px}
+.spacer{flex:1}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border:1px solid var(--line);
+  border-radius:999px;background:rgba(255,255,255,.03);color:var(--dim);font-size:12px;cursor:default}
+.chip b{color:var(--txt);font-weight:600}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--dim)}
+.dot.ok{background:var(--ok);box-shadow:0 0 10px var(--ok)}
+.dot.warn{background:var(--warn);box-shadow:0 0 10px var(--warn)}
+button{font-family:inherit}
+.btn{border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--txt);
+  padding:9px 16px;border-radius:11px;cursor:pointer;font-size:14px;transition:.15s;display:inline-flex;align-items:center;gap:8px}
+.btn:hover{background:rgba(255,255,255,.09);transform:translateY(-1px)}
+.btn.primary{background:linear-gradient(135deg,var(--acc),var(--acc2));border:none;color:#04121c;font-weight:700;
+  box-shadow:0 4px 22px rgba(0,194,255,.35)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.primary:disabled{opacity:.55;cursor:wait;transform:none}
+.btn.ghost{background:transparent}
+.layout{display:grid;grid-template-columns:400px 1fr;gap:18px;align-items:start}
+@media (max-width:1020px){.layout{grid-template-columns:1fr}}
+.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);
+  border-radius:var(--r);padding:18px;box-shadow:0 10px 34px rgba(0,0,0,.35)}
+.card h3{font-size:13px;color:var(--dim);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px;display:flex;gap:8px;align-items:center}
+label{display:block;font-size:12px;color:var(--dim);margin:14px 0 6px}
+textarea,input[type=text],select{width:100%;background:#0a0f16;border:1px solid var(--line);color:var(--txt);
+  border-radius:11px;padding:11px 12px;font-size:14px;font-family:inherit;outline:none;transition:.15s}
+textarea:focus,input:focus,select:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(0,194,255,.15)}
+textarea{min-height:96px;resize:vertical;line-height:1.7}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.preset{padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(0,194,255,.06);
+  color:var(--txt);font-size:12px;cursor:pointer;transition:.15s}
+.preset:hover{border-color:var(--acc);transform:translateY(-1px)}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 2px;border-top:1px solid rgba(255,255,255,.04)}
+.opt:first-of-type{border-top:none}
+.opt .t{font-size:13px}
+.opt .d{font-size:11px;color:var(--dim);margin-top:2px}
+.switch{position:relative;width:46px;height:26px;flex:none;cursor:pointer}
+.switch input{opacity:0;width:0;height:0}
+.slider-knob{position:absolute;inset:0;border-radius:999px;background:#243040;transition:.2s}
+.slider-knob:before{content:"";position:absolute;width:20px;height:20px;border-radius:50%;top:3px;inset-inline-start:3px;background:#fff;transition:.2s}
+.switch input:checked + .slider-knob{background:linear-gradient(135deg,var(--acc),var(--acc2))}
+.switch input:checked + .slider-knob:before{transform:translateX(-20px)}
+html[dir="ltr"] .switch input:checked + .slider-knob:before{transform:translateX(20px)}
+.gen{width:100%;justify-content:center;padding:14px;font-size:16px;margin-top:16px}
+.statusline{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.statusline .stage{color:var(--dim);font-size:13px}
+.progress{height:8px;border-radius:6px;background:#0a0f16;border:1px solid var(--line);overflow:hidden;margin-bottom:14px}
+.progress > div{height:100%;width:0%;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .3s;border-radius:6px}
+.log{background:#070b11;border:1px solid var(--line);border-radius:11px;padding:10px 12px;height:132px;overflow:auto;
+  font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;color:#9fd8ff;line-height:1.7;margin-bottom:16px;direction:ltr;text-align:left}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.tab{padding:8px 14px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--dim);cursor:pointer;font-size:13px}
+.tab.on{background:linear-gradient(135deg,rgba(0,194,255,.2),rgba(124,92,255,.2));color:var(--txt);border-color:var(--acc)}
+.preview{position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#05080c;min-height:260px;display:grid;place-items:center}
+.preview img{max-width:100%;height:auto;display:block}
+.thumbgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.thumb{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#0a0f16;cursor:pointer}
+.thumb img{width:100%;display:block}
+.thumb span{display:block;padding:6px 8px;font-size:11px;color:var(--dim);border-top:1px solid var(--line)}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.stat{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:10px;padding:8px 12px;text-align:center}
+.stat b{display:block;font-size:17px;color:var(--acc)}
+.stat span{font-size:11px;color:var(--dim)}
+.assets{max-height:280px;overflow:auto;border:1px solid var(--line);border-radius:10px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,.05);text-align:start}
+th{color:var(--dim);position:sticky;top:0;background:var(--panel)}
+.sw{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:middle}
+.empty{color:var(--dim);text-align:center;padding:40px 10px;font-size:14px}
+.empty .big{font-size:40px;display:block;margin-bottom:10px}
+footer{margin-top:26px;color:var(--dim);font-size:12px;text-align:center}
+.hidden{display:none}
+.palrow{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 2px}
+.toast-note{margin-top:10px;font-size:12px;color:var(--warn)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">
+      <div class="mark">⚡</div>
+      <div><h1 data-i="title">Roblox UI Forge</h1><small data-i="tag">اكتب فكرة… واستلم واجهة روبلوكس كاملة</small></div>
+    </div>
+    <div class="spacer"></div>
+    <div class="chip" id="gwText"><span class="dot warn"></span><b>—</b></div>
+    <div class="chip" id="gwImg"><span class="dot warn"></span><b>—</b></div>
+    <button class="btn ghost" id="langBtn">EN</button>
+    <button class="btn ghost" id="setBtn">⚙</button>
+  </header>
+
+  <div class="layout">
+    <!-- ======================= config ======================= -->
+    <div class="card">
+      <h3>🎯 <span data-i="brief">الوصف</span></h3>
+      <textarea id="prompt" placeholder="مثال: متجر نيون احترافي مع تبويبات وشبكة عناصر وزر شراء"></textarea>
+      <div class="presets" id="presets"></div>
+
+      <label data-i="kind">نوع الشاشة</label>
+      <select id="kind"></select>
+
+      <div class="row">
+        <div>
+          <label data-i="style">النمط</label>
+          <select id="style"></select>
+        </div>
+        <div>
+          <label data-i="density">الكثافة</label>
+          <select id="density">
+            <option value="">—</option>
+            <option value="compact" data-i="d1">مضغوط</option>
+            <option value="comfortable" data-i="d2">مريح</option>
+            <option value="spacious" data-i="d3">واسع</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label data-i="lang">لغة الواجهة المصمّمة</label>
+          <select id="lang"><option value="">تلقائي</option><option value="ar">عربي RTL</option><option value="en">English LTR</option></select>
+        </div>
+        <div>
+          <label><span data-i="radius">نصف قطر الحواف</span>: <b id="radiusVal">auto</b></label>
+          <input type="range" id="radius" min="0" max="32" value="0" style="width:100%">
+        </div>
+      </div>
+
+      <h3 style="margin-top:18px">🧠 <span data-i="ai">الذكاء الاصطناعي</span></h3>
+      <div class="opt"><div><div class="t" data-i="llm">تحسين النصوص بالنموذج</div><div class="d" data-i="llmd">يعيد صياغة العناوين والزرار، ويعمل حتى بدون اتصال</div></div>
+        <label class="switch"><input type="checkbox" id="useLlm" checked><span class="slider-knob"></span></label></div>
+      <div class="opt"><div><div class="t" data-i="imgs">خلفيات AI</div><div class="d" data-i="imgsd">يولّد خلفيات فنية، ويستبدلها برسومات إجرائية إذا انقطع الاتصال</div></div>
+        <label class="switch"><input type="checkbox" id="useImgs" checked><span class="slider-knob"></span></label></div>
+      <div class="opt"><div><div class="t" data-i="states">حالات الأزرار الأربع</div><div class="d" data-i="statesd">idle / hover / pressed / disabled</div></div>
+        <label class="switch"><input type="checkbox" id="states" checked><span class="slider-knob"></span></label></div>
+
+      <button class="btn primary gen" id="gen">✨ <span data-i="gen">توليد الواجهة + ZIP</span></button>
+      <div class="toast-note hidden" id="note"></div>
+    </div>
+
+    <!-- ======================= results ======================= -->
+    <div class="card">
+      <div class="statusline"><span class="dot" id="stDot"></span><b id="stTxt" data-i="idle">بانتظار التوليد…</b>
+        <span class="stage" id="stStage"></span><span class="spacer"></span>
+        <button class="btn hidden" id="dl">⬇ <span data-i="dl">تحميل ZIP</span></button></div>
+      <div class="progress"><div id="bar"></div></div>
+      <div class="log" id="log"></div>
+
+      <div class="tabs" id="tabs">
+        <button class="tab on" data-v="full" data-i="t_full">المعاينة الكاملة</button>
+        <button class="tab" data-v="showcase" data-i="t_show">بوستر الثيم</button>
+        <button class="tab" data-v="thumbs" data-i="t_thumbs">المكونات</button>
+        <button class="tab" data-v="assets" data-i="t_assets">الأصول</button>
+      </div>
+
+      <div id="statsRow" class="stats"></div>
+      <div class="preview" id="pane-full"><div class="empty"><span class="big"></span><span data-i="empty">ستظهر المعاينة هنا بعد التوليد</span></div></div>
+      <div class="preview hidden" id="pane-showcase"></div>
+      <div class="hidden" id="pane-thumbs" class="thumbgrid"></div>
+      <div class="assets hidden" id="pane-assets"></div>
+    </div>
+  </div>
+
+  <footer data-i="footer">Roblox UI Forge • يعمل بالكامل من وصف نصي • ZIP يضم assets/ + luau/ + studio/</footer>
+</div>
+
+<!-- settings dialog -->
+<div id="setBox" class="card hidden" style="position:fixed;inset:0;margin:auto;width:min(560px,92vw);height:fit-content;z-index:50;box-shadow:0 30px 80px rgba(0,0,0,.6)">
+  <h3>⚙ <span data-i="gwt">إعدادات بوابة AI</span></h3>
+  <label>OpenRouter API key (اختياري)</label><input type="text" id="kOpenrouter">
+  <label>Groq API key (اختياري)</label><input type="text" id="kGroq">
+  <label>OpenAI API key (اختياري)</label><input type="text" id="kOpenai">
+  <div class="row" style="margin-top:12px">
+    <button class="btn primary" id="saveSet" data-i="save">حفظ وإعادة الفحص</button>
+    <button class="btn ghost" id="closeSet" data-i="close">إغلاق</button>
+  </div>
+</div>
+
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+let LANG = "ar", META = null, JOB = null, POLL = null;
+
+const I18N = {
+ ar: { title:"Roblox UI Forge", tag:"اكتب فكرة… واستلم واجهة روبلوكس كاملة", brief:"الوصف", kind:"نوع الشاشة",
+   style:"النمط", density:"الكثافة", lang:"لغة الواجهة المصمّمة", radius:"نصف قطر الحواف", ai:"الذكاء الاصطناعي",
+   llm:"تحسين النصوص بالنموذج", llmd:"يعيد صياغة العناوين، ويعمل حتى بدون اتصال", imgs:"خلفيات AI",
+   imgsd:"يستبدلها برسومات إجرائية إذا انقطع الاتصال", states:"حالات الأزرار الأربع", statesd:"idle / hover / pressed / disabled",
+   gen:"توليد الواجهة + ZIP", dl:"تحميل ZIP", idle:"بانتظار التوليد…", empty:"ستظهر المعاينة هنا بعد التوليد",
+   t_full:"المعاينة الكاملة", t_show:"بوستر الثيم", t_thumbs:"المكونات", t_assets:"الأصول",
+   footer:"Roblox UI Forge • يعمل بالكامل من وصف نصي • ZIP يضم assets/ + luau/ + studio/",
+   gwt:"إعدادات بوابة AI", save:"حفظ وإعادة الفحص", close:"إغلاق", d1:"مضغوط", d2:"مريح", d3:"واسع",
+   running:"جارٍ التوليد…", done:"اكتمل!", error:"حدث خطأ" },
+ en: { title:"Roblox UI Forge", tag:"Type an idea… get a full Roblox UI", brief:"Brief", kind:"Screen type",
+   style:"Style", density:"Density", lang:"Designed UI language", radius:"Corner radius", ai:"Artificial intelligence",
+   llm:"LLM copy refinement", llmd:"rewrites titles & labels; works offline too", imgs:"AI backdrops",
+   imgsd:"falls back to procedural art if offline", states:"4 button states", statesd:"idle / hover / pressed / disabled",
+   gen:"Generate UI + ZIP", dl:"Download ZIP", idle:"Waiting for a generation…", empty:"Your preview will appear here",
+   t_full:"Full preview", t_show:"Theme poster", t_thumbs:"Components", t_assets:"Assets",
+   footer:"Roblox UI Forge • everything from one text prompt • ZIP contains assets/ + luau/ + studio/",
+   gwt:"AI gateway settings", save:"Save & re-probe", close:"Close", d1:"Compact", d2:"Comfortable", d3:"Spacious",
+   running:"Generating…", done:"Done!", error:"Error" }
+};
+
+function applyLang(){
+  document.documentElement.lang = LANG;
+  document.documentElement.dir = LANG === "ar" ? "rtl" : "ltr";
+  document.querySelectorAll("[data-i]").forEach(el => {
+    const k = el.getAttribute("data-i");
+    if (I18N[LANG][k]) el.textContent = I18N[LANG][k];
+  });
+  $("#langBtn").textContent = LANG === "ar" ? "EN" : "عربي";
+}
+
+async function loadMeta(){
+  META = await (await fetch("/api/meta")).json();
+  const st = $("#style"); st.innerHTML = "";
+  META.styles.forEach(s => { const o = document.createElement("option"); o.value = s.id;
+    o.textContent = `${LANG==="ar"?s.label_ar:s.label_en} • ${s.id}`; st.appendChild(o); });
+  const kd = $("#kind"); kd.innerHTML = '<option value="">—</option>';
+  META.kinds.forEach(k => { const o = document.createElement("option"); o.value = k.id;
+    o.textContent = `${LANG==="ar"?k.ar:k.en}`; kd.appendChild(o); });
+  $("#presets").innerHTML = "";
+  META.presets.forEach(p => { const b = document.createElement("button"); b.className = "preset";
+    b.textContent = LANG==="ar"?p.ar:p.en; b.onclick = () => { $("#prompt").value = p.text; }; $("#presets").appendChild(b); });
+}
+
+function setStat(k, v){ const el = document.createElement("div"); el.className = "stat";
+  el.innerHTML = `<b>${v}</b><span>${k}</span>`; return el; }
+
+function showTab(v){
+  document.querySelectorAll("#tabs .tab").forEach(t => t.classList.toggle("on", t.dataset.v === v));
+  ["full","showcase","thumbs","assets"].forEach(p => {
+    const el = $("#pane-" + p); if (!el) return;
+    el.classList.toggle("hidden", p !== v);
+  });
+}
+$("#tabs").addEventListener("click", e => { const t = e.target.closest(".tab"); if (t) showTab(t.dataset.v); });
+
+async function probe(){
+  const p = await (await fetch("/api/gateway")).json();
+  const txt = (p.pollinations && p.pollinations.available) ? ["ok","Pollinations ✓"] :
+              (p.openrouter && p.openrouter.available) ? ["ok","OpenRouter ✓"] : ["warn", LANG==="ar"?"محلي فقط":"local only"];
+  $("#gwText").innerHTML = `<span class="dot ${txt[0]}"></span><b>${LANG==="ar"?"نص":"text"}: ${txt[1]}</b>`;
+  $("#gwImg").innerHTML = `<span class="dot ${txt[0]}"></span><b>${LANG==="ar"?"صور":"images"}: ${txt[1]}</b>`;
+}
+
+function jobImg(name){ return `/api/jobs/${JOB}/img/${name}`; }
+
+function renderResult(res){
+  const stats = res.stats || {};
+  const row = $("#statsRow"); row.innerHTML = "";
+  const pairs = [[LANG==="ar"?"مكونات":"nodes", stats.nodes], [LANG==="ar"?"أصول":"assets", stats.assets],
+    [LANG==="ar"?"حالات":"states", stats.button_states], [LANG==="ar"?"نصوص":"texts", stats.texts],
+    [LANG==="ar"?"AI":"AI", stats.ai_images], [LANG==="ar"?"زمن(ث)":"s", stats.elapsed]];
+  pairs.forEach(p => row.appendChild(setStat(p[0], p[1])));
+  $("#pane-full").innerHTML = `<img src="${jobImg("preview_full")}" alt="">`;
+  $("#pane-showcase").innerHTML = `<img src="${jobImg("preview_showcase")}" alt="">`;
+  const th = $("#pane-thumbs"); th.className = "thumbgrid"; th.innerHTML = "";
+  (res.thumbs || []).forEach(t => { const d = document.createElement("div"); d.className = "thumb";
+    d.innerHTML = `<img src="${jobImg(t)}"><span>${t.replace("thumb_","").replace(/_\d+$/,"")}</span>`;
+    d.onclick = () => { $("#pane-full").innerHTML = `<img src="${jobImg(t)}">`; showTab("full"); };
+    th.appendChild(d); });
+  const at = $("#pane-assets");
+  let rows = (res.assets || []).map(a =>
+    `<tr><td>${a.key}</td><td>${a.category}</td><td>${a.w}×${a.h}</td><td>${a.source}</td><td>${a.slice ? "✓" : ""}</td></tr>`).join("");
+  at.innerHTML = `<table><thead><tr><th>key</th><th>cat</th><th>px</th><th>src</th><th>slice</th></tr></thead><tbody>${rows}</tbody></table>`;
+  const dl = $("#dl"); dl.classList.remove("hidden");
+  dl.onclick = () => { window.location = `/api/jobs/${JOB}/zip`; };
+}
+
+async function pollJob(){
+  if (!JOB) return;
+  const j = await (await fetch(`/api/jobs/${JOB}`)).json();
+  $("#log").innerHTML = (j.log || []).map(l => `<div>${l}</div>`).join("");
+  $("#log").scrollTop = $("#log").scrollHeight;
+  $("#stStage").textContent = (j.stage || "");
+  if (j.status === "running" || j.status === "queued"){
+    $("#stDot").className = "dot warn"; $("#stTxt").textContent = I18N[LANG].running;
+  } else if (j.status === "done"){
+    $("#stDot").className = "dot ok"; $("#stTxt").textContent = I18N[LANG].done;
+    $("#bar").style.width = "100%";
+    renderResult(j.result); stopPoll();
+  } else {
+    $("#stDot").className = "dot"; $("#stDot").style.background = "var(--bad)";
+    $("#stTxt").textContent = I18N[LANG].error + " — " + (j.error || ""); stopPoll();
+  }
+}
+function startPoll(){ stopPoll(); POLL = setInterval(pollJob, 700); pollJob(); }
+function stopPoll(){ if (POLL) { clearInterval(POLL); POLL = null; } }
+
+$("#gen").onclick = async () => {
+  const body = { prompt: $("#prompt").value.trim(),
+    kind: $("#kind").value || null, style: $("#style").value || null,
+    density: $("#density").value || null, lang: $("#lang").value || null,
+    radius: (+$("#radius").value > 0 ? +$("#radius").value : null),
+    use_llm: $("#useLlm").checked, use_ai_images: $("#useImgs").checked,
+    export_states: $("#states").checked };
+  $("#gen").disabled = true; $("#dl").classList.add("hidden");
+  $("#bar").style.width = "6%"; $("#log").innerHTML = "";
+  $("#statsRow").innerHTML = ""; $("#note").classList.add("hidden");
+  const r = await fetch("/api/generate", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(body) });
+  const j = await r.json(); JOB = j.job_id; startPoll();
+  const wait = setInterval(async () => {
+    const jj = await (await fetch(`/api/jobs/${JOB}`)).json();
+    const p = (jj.log || []).length; $("#bar").style.width = Math.min(92, 8 + p * 6) + "%";
+    if (jj.status !== "running" && jj.status !== "queued") { $("#gen").disabled = false; clearInterval(wait);
+      if (jj.status === "done") $("#bar").style.width = "100%"; }
+  }, 600);
+};
+
+$("#radius").oninput = e => { $("#radiusVal").textContent = (+e.target.value > 0 ? e.target.value + "px" : "auto"); };
+$("#langBtn").onclick = () => { LANG = LANG === "ar" ? "en" : "ar"; applyLang(); loadMeta(); probe(); };
+$("#setBtn").onclick = () => $("#setBox").classList.toggle("hidden");
+$("#closeSet").onclick = () => $("#setBox").classList.add("hidden");
+$("#saveSet").onclick = async () => {
+  await fetch("/api/gateway", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({
+    openrouter_key: $("#kOpenrouter").value || null, groq_key: $("#kGroq").value || null,
+    openai_key: $("#kOpenai").value || null }) });
+  $("#setBox").classList.add("hidden"); probe();
+};
+
+applyLang(); loadMeta(); probe(); showTab("full");
+</script>
+</body>
+</html>
